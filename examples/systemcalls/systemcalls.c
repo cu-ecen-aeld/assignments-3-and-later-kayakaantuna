@@ -9,7 +9,13 @@
 */
 bool do_system(const char *cmd)
 {
-
+    if (cmd == NULL) {
+        // The system() specification states that if cmd is NULL,
+        // the function returns nonzero if a command processor is available,
+        // and zero otherwise. This behavior does not indicate success or failure
+        // of a command execution, so it's handled separately.
+        return false;
+    }
 /*
  * TODO  add your code here
  *  Call the system() function with the command set in the cmd
@@ -17,7 +23,19 @@ bool do_system(const char *cmd)
  *   or false() if it returned a failure
 */
 
-    return true;
+    int ret = system(cmd);
+
+    // Check if the command was executed successfully
+    if (ret == -1) {
+        // system() call failed
+        return false;
+    } else if (WIFEXITED(ret) && WEXITSTATUS(ret) == 0) {
+        // The command was executed successfully
+        return true;
+    } else {
+        // The command failed or system() didn't execute properly
+        return false;
+    }
 }
 
 /**
@@ -58,10 +76,40 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
+    // Forking
+    pid_t pid = fork();
 
-    va_end(args);
+    if (pid == -1)
+    {
+        // Fork failed
+        va_end(args);
+        return false;
+    }
+    else if (pid == 0)
+    {
+        // Child process
+        execv(command[0], command);
+        // If execv returns, it must have failed
+        _exit(EXIT_FAILURE);
+    }
+    else
+    {
+        // Parent process
+        int status;
+        waitpid(pid, &status, 0);
+        va_end(args);
 
-    return true;
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+        {
+            // Command executed successfully
+            return true;
+        }
+        else
+        {
+            // Command execution failed
+            return false;
+        }
+    }
 }
 
 /**
@@ -73,27 +121,51 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 {
     va_list args;
     va_start(args, count);
-    char * command[count+1];
-    int i;
-    for(i=0; i<count; i++)
-    {
+    char *command[count + 1];
+    for (int i = 0; i < count; i++) {
         command[i] = va_arg(args, char *);
     }
     command[count] = NULL;
-    // this line is to avoid a compile warning before your implementation is complete
-    // and may be removed
-    command[count] = command[count];
 
+    int fd = open(outputfile, O_WRONLY | O_TRUNC | O_CREAT, 0666);
+    if (fd < 0) { 
+        perror("open"); 
+        va_end(args);
+        return false; 
+    }
 
-/*
- * TODO
- *   Call execv, but first using https://stackoverflow.com/a/13784315/1446624 as a refernce,
- *   redirect standard out to a file specified by outputfile.
- *   The rest of the behaviour is same as do_exec()
- *
-*/
+    pid_t pid = fork();
 
-    va_end(args);
+    if (pid == -1) {
+        // Fork failed
+        close(fd);
+        va_end(args);
+        return false;
+    } else if (pid == 0) {
+        // Child process
+        if (dup2(fd, STDOUT_FILENO) < 0) { // Redirect stdout to the file
+            perror("dup2");
+            close(fd);
+            _exit(EXIT_FAILURE);
+        }
+        close(fd); // No longer need the original fd
+        execv(command[0], command);
+        // If execv returns, it has failed
+        perror("execv");
+        _exit(EXIT_FAILURE);
+    } else {
+        // Parent process
+        close(fd); // Close the file descriptor as it's no longer needed in the parent
+        int status;
+        waitpid(pid, &status, 0);
+        va_end(args);
 
-    return true;
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+            // Command executed successfully
+            return true;
+        } else {
+            // Command execution failed
+            return false;
+        }
+    }
 }
