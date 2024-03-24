@@ -37,8 +37,16 @@ if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
     cd linux-stable
     echo "Checking out version ${KERNEL_VERSION}"
     git checkout ${KERNEL_VERSION}
-    /usr/bin/curl -o yyloc.patch https://github.com/torvalds/linux/commit/e33a814e772cdc36436c8c188d8c42d019fda639.patch
-    git apply yyloc.patch
+    FILE_PATH="scripts/dtc/dtc-lexer.l"
+
+    # Check if the file exists
+    if [ -f "$FILE_PATH" ]; then
+        # Use sed to delete the line containing "YYLTYPE yylloc;"
+        sed -i '/YYLTYPE yylloc;/d' "$FILE_PATH"
+        echo "Line deleted successfully."
+    else
+        echo "Error: File does not exist."
+    fi
 
 
     make clean
