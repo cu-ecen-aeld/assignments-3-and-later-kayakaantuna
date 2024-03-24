@@ -23,6 +23,4 @@ jobs:
           - name: Checkout submodules
             run : git submodule update --init --recursive
           - name: Run full test
-            run: |
-            apk add curl
-            ./full-test.sh
+            run: ./full-test.sh
