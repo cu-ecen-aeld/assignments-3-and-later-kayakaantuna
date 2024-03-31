@@ -1,0 +1,10 @@
+Mar 31 08:55:37 buildroot user.debug writer[122]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna1.txt
+Mar 31 08:55:37 buildroot user.debug writer[123]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna2.txt
+Mar 31 08:55:37 buildroot user.debug writer[124]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna3.txt
+Mar 31 08:55:37 buildroot user.debug writer[125]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna4.txt
+Mar 31 08:55:37 buildroot user.debug writer[126]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna5.txt
+Mar 31 08:55:37 buildroot user.debug writer[127]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna6.txt
+Mar 31 08:55:37 buildroot user.debug writer[128]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna7.txt
+Mar 31 08:55:37 buildroot user.debug writer[129]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna8.txt
+Mar 31 08:55:37 buildroot user.debug writer[130]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna9.txt
+Mar 31 08:55:37 buildroot user.debug writer[131]: Writing 'AELD_IS_FUN' to /tmp/aeld-data/kayakaantuna10.txt
